@@ -1,0 +1,15 @@
+.buttons {
+    padding: 5px;
+    float: right;
+}
+
+.active {
+    padding: 4px;
+    color: rgb(132, 211, 132);
+}
+
+.discontinued {
+    padding: 4px;
+    color: rgb(247, 165, 165);
+}
+

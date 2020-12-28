@@ -1,0 +1,13 @@
+label {
+    font-weight: bold;
+}
+
+.p-picklist-buttons button, .p-picklist-transfer-buttons button{
+    background:black;
+    border: black;
+}
+
+.p-picklist-transfer-buttons button:enabled:hover{
+    background:rgb(150, 0, 0);
+    border: rgb(150, 0, 0);
+}

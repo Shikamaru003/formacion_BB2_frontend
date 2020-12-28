@@ -1,0 +1,17 @@
+.p-menubar {
+    background-color: black !important;
+  }
+  
+  .p-menuitem-text,
+  .p-menuitem-icon {
+    color: white !important;
+  }
+  
+  .p-menuitem-link:hover .p-menuitem-text,
+  .p-menuitem-link:hover .p-menuitem-icon {
+    color: black !important;
+  }
+  
+  .p-menuitem-link:hover {
+    background-color: white !important;
+  }
