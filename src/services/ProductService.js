@@ -48,6 +48,16 @@ class ProductService {
         });
     }
 
+    deactivateProduct(id, reason, username) {
+        return axios.delete(API_URL + `/products/${id}/deactivate`, {
+            params: {
+                reason: reason,
+                username: username
+            },
+            headers: authHeader()
+        });
+    }
+
 }
 
 export default new ProductService();

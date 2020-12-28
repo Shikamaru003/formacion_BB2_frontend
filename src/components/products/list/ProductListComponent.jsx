@@ -5,8 +5,10 @@ import { Column } from 'primereact/column';
 import { Messages } from 'primereact/messages';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
+import { InputTextarea } from 'primereact/inputtextarea';
 
 import ProductService from '../../../services/ProductService.js'
+import AuthenticationService from '../../../services/AuthenticationService.js'
 
 import './ProductListComponent.css'
 
@@ -23,8 +25,10 @@ class ProductListComponent extends Component {
             totalRecords: 0,
             sortField: '',
             sortOrder: 1,
-            showDialog: false,
-            selectedItemId: 0
+            showDeleteDialog: false,
+            showDeactivateDialog: false,
+            selectedItemId: 0,
+            deactivateReason: ''
         };
     }
 
@@ -82,7 +86,29 @@ class ProductListComponent extends Component {
                 });
             }
         );
-        this.setState({ showDialog: false });
+        this.setState({ showDeleteDialog: false });
+    }
+
+    deactiveProduct(id) {
+        ProductService.deactivateProduct(id, this.state.deactivateReason, AuthenticationService.getCurrentUser().username).then(
+            () => {
+                console.log('deactivated')
+                ProductService.getProducts(this.state.page, this.state.rows, this.state.sortField, this.state.sortOrder).then(
+                    response => {
+                        this.setState({ products: response.data.content, totalRecords: response.data.totalElements });
+                        this.messages.show({
+                            severity: 'success', summary: '', detail: `Product with id ${id} deactivated!`
+                        });
+                    }
+                )
+            },
+            error => {
+                this.messages.show({
+                    severity: 'error', summary: '', detail: 'Error deactivating product!'
+                });
+            }
+        );
+        this.setState({ showDeactivateDialog: false, deactivateReason: '' });
     }
 
     priceTemplate(rowData) {
@@ -97,21 +123,32 @@ class ProductListComponent extends Component {
         return <span className={rowData.state === "ACTIVE" ? 'active' : 'discontinued'}>{rowData.state}</span>;
     }
 
-    dialogFooter() {
+    deleteDialogFooter() {
         return (
             <div>
-                <Button label="No" icon="pi pi-times" onClick={() => this.setState({ showDialog: false })} />
+                <Button label="No" icon="pi pi-times" onClick={() => this.setState({ showDeleteDialog: false })} />
                 <Button label="Yes" icon="pi pi-check" onClick={() => this.deleteProduct(this.state.selectedItemId)} />
+            </div>
+        );
+    }
+
+
+    deactivateDialogFooter() {
+        return (
+            <div>
+                <Button label="Cancel" icon="pi pi-times" onClick={() => this.setState({ showDeactivateDialog: false })} />
+                <Button label="Ok" icon="pi pi-check" disabled={this.state.deactivateReason === ''} onClick={() => this.deactiveProduct(this.state.selectedItemId)} />
             </div>
         );
     }
 
     buttonsTemplate(rowData) {
         return (
-            <span>
-                <Button icon="pi pi-pencil" className="p-button-rounded p-button-warning p-button-text" onClick={() => this.editProduct(rowData.id)} />
-                <Button icon="pi pi-trash" className="p-button-rounded p-button-danger p-button-text" onClick={() => this.setState({ showDialog: true, selectedItemId: rowData.id })}></Button>
-            </span>
+            <div style={{ float: 'right' }}>
+                {rowData.state === 'ACTIVE' && <Button icon="pi pi-pencil" className="p-button-rounded p-button-text" tooltip="Edit" onClick={() => this.editProduct(rowData.id)} />}
+                {rowData.state === 'ACTIVE' && <Button icon="pi pi-ban" className="p-button-rounded p-button-warning p-button-text" tooltip="Deactive" onClick={() => this.setState({ showDeactivateDialog: true, selectedItemId: rowData.id })} />}
+                {AuthenticationService.isAdmin() && <Button icon="pi pi-trash" className="p-button-rounded p-button-danger p-button-text" tooltip="Delete" onClick={() => this.setState({ showDeleteDialog: true, selectedItemId: rowData.id })}></Button>}
+            </div>
         )
     }
 
@@ -132,12 +169,17 @@ class ProductListComponent extends Component {
                         <Column field="state" header="State" body={(r) => this.stateTemplate(r)} sortable ></Column>
                         <Column field="creationDate" header="Creation Date" body={(r) => this.dateTemplate(r)} sortable ></Column>
                         <Column field="creator" header="Creator" sortable ></Column>
-                        <Column body={(r) => this.buttonsTemplate(r)} style={{ textAlign: 'center', width: '7em' }}></Column>
+                        <Column body={(r) => this.buttonsTemplate(r)} style={{ textAlign: 'center', width: '10em' }}></Column>
                     </DataTable>
-                    <Dialog header="Confirmation" visible={this.state.showDialog} footer={this.dialogFooter()} onHide={() => this.setState({ showDialog: false })}>
+                    <Dialog header="Confirmation" visible={this.state.showDeleteDialog} footer={this.deleteDialogFooter()} onHide={() => this.setState({ showDeleteDialog: false })}>
                         <div className="confirmation-content">
                             <i className="pi pi-exclamation-triangle p-mr-3" style={{ fontSize: '2rem' }} />
                             <span>Are you sure you want to proceed?</span>
+                        </div>
+                    </Dialog>
+                    <Dialog header="Deactivate reason" visible={this.state.showDeactivateDialog} footer={this.deactivateDialogFooter()} onHide={() => this.setState({ showDeactivateDialog: false })}>
+                        <div className="confirmation-content">
+                            <InputTextarea rows={5} cols={30} value={this.state.deactivateReason} onChange={(e) => this.setState({ deactivateReason: e.target.value })} autoResize />
                         </div>
                     </Dialog>
                 </div>
