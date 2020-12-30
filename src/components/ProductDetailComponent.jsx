@@ -10,13 +10,10 @@ import { Button } from 'primereact/button';
 import { Messages } from 'primereact/messages';
 import { Dialog } from 'primereact/dialog';
 
-import ProductService from '../../../services/ProductService.js'
-import SupplierService from '../../../services/SupplierService.js'
-import PriceReductionService from '../../../services/PriceReductionService.js'
-import AuthenticationService from '../../../services/AuthenticationService.js';
-
-import './ProductDetailComponent.css';
-
+import ProductService from '../services/ProductService.js'
+import SupplierService from '../services/SupplierService.js'
+import PriceReductionService from '../services/PriceReductionService.js'
+import AuthenticationService from '../services/AuthenticationService.js';
 
 class ProductDetailComponent extends Component {
 
@@ -171,20 +168,19 @@ class ProductDetailComponent extends Component {
 
     supplierTemplate(item) {
         return (
-            <div className="product-item">
-                <h5 className="p-mb-2">{item.name}</h5>
-                <i className="pi pi-tag product-category-icon"></i>
-                <span className="product-category">{item.country}</span>
+            <div className="supplier-item">
+                <h4 className="supplier-name">{item.name}</h4>
+                <i className="pi pi-tag"></i>
+                <span className="supplier-country">{item.country}</span>
             </div>
         );
     }
 
     priceReductionTemplate(item) {
         return (
-            <div className="product-item">
-                <h4 className="p-mb-2">{item.reducedPrice}</h4>
-                <div className="product-category">From {new Date(item.startDate).toLocaleDateString()}</div>
-                <div className="product-category">To {new Date(item.endDate).toLocaleDateString()}</div>
+            <div className="price-reduction-item">
+                <h4 className="price-reduction-price">{item.reducedPrice}</h4>
+                <div className="price-reduction-dates">(From <b>{new Date(item.startDate).toLocaleDateString()}</b> To <b>{new Date(item.endDate).toLocaleDateString()}</b>)</div>
             </div>
         );
     }
@@ -245,18 +241,18 @@ class ProductDetailComponent extends Component {
                             <label htmlFor="creationDate">Creation Date</label>
                             <Calendar id="creationDate" readOnly="{true}" value={new Date(this.state.product.creationDate)} onChange={(e) => this.onChange(e)} showIcon disabled={this.props.match.params.id === '-1'} />
                         </div>
-                        <div className="p-field p-col-6" style={{ textAlign: 'center' }}>
+                        <div className="p-field p-col-12" style={{ textAlign: 'center' }}>
                             <label htmlFor="suppliers">Suppliers</label>
                             <PickList id="suppliers" source={this.state.availableSuppliers} target={this.state.product.suppliers} itemTemplate={(i) => this.supplierTemplate(i)}
                                 sourceHeader="Available" targetHeader="Selected"
-                                sourceStyle={{ height: '300px' }} targetStyle={{ height: '300px' }}
+                                sourceStyle={{ height: '200px' }} targetStyle={{ height: '200px' }}
                                 onChange={(e) => this.onSupplierSelectChange(e)}></PickList>
                         </div>
-                        <div className="p-field p-col-6" style={{ textAlign: 'center' }}>
+                        <div className="p-field p-col-12" style={{ textAlign: 'center' }}>
                             <label htmlFor="priceReductions">Price Reductions</label>
                             <PickList id="priceReductions" source={this.state.availablePriceReductions} target={this.state.product.priceReductions} itemTemplate={(i) => this.priceReductionTemplate(i)}
                                 sourceHeader="Available" targetHeader="Selected"
-                                sourceStyle={{ height: '300px' }} targetStyle={{ height: '300px' }}
+                                sourceStyle={{ height: '200px' }} targetStyle={{ height: '200px' }}
                                 onChange={(e) => this.onPriceReductionSelectChange(e)}></PickList>
                         </div>
                     </div>

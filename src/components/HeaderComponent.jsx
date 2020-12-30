@@ -3,10 +3,7 @@ import { Menubar } from 'primereact/menubar';
 import { Button } from 'primereact/button';
 import { withRouter } from 'react-router';
 
-import AuthenticationService from '../../services/AuthenticationService';
-
-import './HeaderComponent.css';
-
+import AuthenticationService from '../services/AuthenticationService';
 
 class HeaderComponent extends Component {
 

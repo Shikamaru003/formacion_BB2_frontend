@@ -7,11 +7,8 @@ import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { InputTextarea } from 'primereact/inputtextarea';
 
-import ProductService from '../../../services/ProductService.js'
-import AuthenticationService from '../../../services/AuthenticationService.js'
-
-import './ProductListComponent.css'
-
+import ProductService from '../services/ProductService.js'
+import AuthenticationService from '../services/AuthenticationService.js'
 
 class ProductListComponent extends Component {
 
@@ -144,7 +141,7 @@ class ProductListComponent extends Component {
 
     buttonsTemplate(rowData) {
         return (
-            <div>
+            <div style={{ textAlign: 'right' }}>
                 {rowData.state === 'ACTIVE' && <Button icon="pi pi-pencil" className="p-button-rounded p-button-text" tooltip="Edit" onClick={() => this.editProduct(rowData.id)} />}
                 {rowData.state === 'ACTIVE' && <Button icon="pi pi-ban" className="p-button-rounded p-button-warning p-button-text" tooltip="Deactive" onClick={() => this.setState({ showDeactivateDialog: true, selectedItemId: rowData.id })} />}
                 {AuthenticationService.isAdmin() && <Button icon="pi pi-trash" className="p-button-rounded p-button-danger p-button-text" tooltip="Delete" onClick={() => this.setState({ showDeleteDialog: true, selectedItemId: rowData.id })}></Button>}
@@ -164,12 +161,12 @@ class ProductListComponent extends Component {
                         onSort={(e) => this.onSort(e)} sortField={this.state.sortField} sortOrder={this.state.sortOrder}>
                         <Column field="id" header="Id" sortable ></Column>
                         <Column field="itemCode" header="Item Code" sortable ></Column>
-                        <Column field="description" header="Description" sortable></Column>
+                        <Column field="description" header="Description" sortable ></Column>
                         <Column field="price" header="Price" body={(r) => this.priceTemplate(r)} sortable ></Column>
                         <Column field="state" header="State" body={(r) => this.stateTemplate(r)} sortable ></Column>
                         <Column field="creationDate" header="Creation Date" body={(r) => this.dateTemplate(r)} sortable ></Column>
                         <Column field="creator" header="Creator" sortable ></Column>
-                        <Column body={(r) => this.buttonsTemplate(r)} style={{ textAlign: 'right', width: '10em' }}></Column>
+                        <Column body={(r) => this.buttonsTemplate(r)}></Column>
                     </DataTable>
                     <Dialog header="Confirmation" visible={this.state.showDeleteDialog} footer={this.deleteDialogFooter()} onHide={() => this.setState({ showDeleteDialog: false })}>
                         <div className="confirmation-content">
@@ -179,7 +176,7 @@ class ProductListComponent extends Component {
                     </Dialog>
                     <Dialog header="Deactivate reason" visible={this.state.showDeactivateDialog} footer={this.deactivateDialogFooter()} onHide={() => this.setState({ showDeactivateDialog: false })}>
                         <div className="confirmation-content">
-                            <InputTextarea rows={5} cols={30} value={this.state.deactivateReason} onChange={(e) => this.setState({ deactivateReason: e.target.value })} autoResize />
+                            <InputTextarea rows={5} cols={70} value={this.state.deactivateReason} onChange={(e) => this.setState({ deactivateReason: e.target.value })} autoResize />
                         </div>
                     </Dialog>
                 </div>

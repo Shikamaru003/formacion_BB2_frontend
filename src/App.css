@@ -1,3 +1,52 @@
-.App {
+
+label {
+  font-weight: bold;
+}
+
+.main {
+  padding: 5px;
   height: 100%;
+}
+
+.buttons {
+  padding: 5px;
+  float: right;
+}
+
+.active {
+  padding: 4px;
+  color: rgb(132, 211, 132);
+}
+
+.discontinued {
+  padding: 4px;
+  color: rgb(247, 165, 165);
+}
+
+.supplier-item {
+  display: flex;
+  align-items: center;
+  height: 30px;
+}
+
+.supplier-name {
+  margin-right: 15px;
+}
+
+.supplier-country {
+  margin-left: 2px;
+}
+
+.price-reduction-item {
+  display: flex;
+  align-items: center;
+  height: 30px;
+}
+
+.price-reduction-price {
+  margin-right: 15px;
+}
+
+.price-reduction-dates {
+  margin-left: 2px;
 }

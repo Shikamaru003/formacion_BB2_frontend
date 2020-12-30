@@ -1,13 +1,18 @@
-.main {
-    padding: 5px;
-    height: 100%;
+@import 'primereact/resources/primereact.min.css';
+@import 'primeicons/primeicons.css';
+@import 'primeflex/primeflex.css';
+
+
+.p-datatable-wrapper {
+    min-height: 767px;
 }
 
 .datatable-responsive .p-datatable-responsive .p-datatable-tbody>tr>td .p-column-title {
     display: none;
 }
 
-.p-datatable-header, .p-panel-header{
+.p-datatable-header,
+.p-panel-header {
     display: block !important;
     text-align: center !important;
     background-color: #ebbd34 !important;
@@ -40,9 +45,27 @@
     .datatable-responsive .p-datatable.p-datatable-responsive .p-datatable-tbody>tr>td:last-child {
         border-bottom: 1px solid var(--surface-d);
     }
+}
 
-    .buttons {
-        padding: 5px;
-        float: right;
-    }
+.p-menubar {
+    background-color: black !important;
+}
+
+.p-menuitem-text,
+.p-menuitem-icon {
+    color: white !important;
+}
+
+.p-menuitem-link:hover .p-menuitem-text,
+.p-menuitem-link:hover .p-menuitem-icon {
+    color: black !important;
+}
+
+.p-menuitem-link:hover {
+    background-color: white !important;
+}
+
+  .p-picklist-buttons button, .p-picklist-transfer-buttons button{
+  background:black;
+  border: black;
 }

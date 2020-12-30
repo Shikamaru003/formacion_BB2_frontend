@@ -3,9 +3,7 @@ import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Messages } from 'primereact/messages';
 
-import AuthenticationService from '../../services/AuthenticationService.js';
-
-import './LoginComponent.css';
+import AuthenticationService from '../services/AuthenticationService.js';
 
 class LoginComponent extends Component {
 
@@ -66,7 +64,7 @@ class LoginComponent extends Component {
                             </div>
                         </div>
                         <div className="p-field" style={{ textAlign: 'center' }}>
-                            <Button label="Login" disabled={!this.state.username || !this.state.password} onClick={() =>this.login()}/>
+                            <Button label="Login" disabled={!this.state.username || !this.state.password} onClick={() => this.login()} />
                         </div>
                         <Messages ref={(el) => this.messages = el}></Messages>
                     </div>

@@ -1,31 +1,29 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 
-import AuthenticationService from '../../services/AuthenticationService'
-import ProductListComponent from '../products/list/ProductListComponent';
-import ProductDetailComponent from '../products/detail/ProductDetailComponent';
-import HeaderComponent from '../header/HeaderComponent';
-import LoginComponent from '../login/LoginComponent';
-import UserListComponent from '../users/list/UserListComponent';
-import UserDetailComponent from '../users/detail/UserDetailComponet';
-import AuthenticatedRoute from '../route/AuthenticatedRoute';
-
-import './MainComponent.css';
+import AuthenticationService from '../services/AuthenticationService'
+import ProductListComponent from './ProductListComponent';
+import ProductDetailComponent from './ProductDetailComponent';
+import HeaderComponent from './HeaderComponent';
+import LoginComponent from './LoginComponent';
+import UserListComponent from './UserListComponent';
+import UserDetailComponent from './UserDetailComponet';
+import AuthenticatedRoute from './AuthenticatedRoute';
 
 class MainComponent extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            theme:'saga-blue'
+            theme: 'saga-blue'
         }
     }
-    
-    componentDidMount(){
+
+    componentDidMount() {
         this.importTheme(this.state.theme)
     }
 
-    importTheme(theme){
+    importTheme(theme) {
         require(`primereact/resources/themes/${theme}/theme.css`);
     }
 

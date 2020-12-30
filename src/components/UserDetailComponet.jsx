@@ -6,7 +6,7 @@ import { Dropdown } from 'primereact/dropdown';
 import { Button } from 'primereact/button';
 import { Messages } from 'primereact/messages';
 
-import UserService from '../../../services/UserService.js'
+import UserService from '../services/UserService.js'
 
 class UserDetailComponent extends Component {
 
