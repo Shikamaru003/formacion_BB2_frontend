@@ -221,13 +221,13 @@ class ProductDetailComponent extends Component {
                 <Messages ref={(e) => this.messages = e}></Messages>
                 <Panel header="Product Detail">
                     <div className="p-fluid p-formgrid p-grid">
-                        <div className="p-field p-col-9">
-                            <label htmlFor="description">Description</label>
-                            <InputText id="description" type="text" value={this.state.product.description} onChange={(e) => this.onChange(e)} />
-                        </div>
                         <div className="p-field p-col-3">
                             <label htmlFor="itemCode">Code</label>
                             <InputNumber id="itemCode" value={this.state.product.itemCode} useGrouping={false} onValueChange={(e) => this.onChange(e)} disabled={this.props.match.params.id !== '-1'} />
+                        </div>
+                        <div className="p-field p-col-9">
+                            <label htmlFor="description">Description</label>
+                            <InputText id="description" type="text" value={this.state.product.description} onChange={(e) => this.onChange(e)} />
                         </div>
                         <div className="p-field p-col-3">
                             <label htmlFor="creator">Creator</label>
@@ -235,7 +235,7 @@ class ProductDetailComponent extends Component {
                         </div>
                         <div className="p-field p-col-3">
                             <label htmlFor="state">State</label>
-                            <Dropdown id="state" value={this.state.product.state} options={this.states} onChange={(e) => this.onChange(e)} disabled={this.props.match.params.id === '-1'} />
+                            <Dropdown id="state" value={this.state.product.state} options={this.states} onChange={(e) => this.onChange(e)} disabled />
                         </div>
                         <div className="p-field p-col-3">
                             <label htmlFor="price">Price</label>
@@ -261,7 +261,7 @@ class ProductDetailComponent extends Component {
                         </div>
                     </div>
                 </Panel>
-                <div style={{ float: 'right' }}>
+                <div className="buttons">
                     {buttons}
                 </div>
             </div>

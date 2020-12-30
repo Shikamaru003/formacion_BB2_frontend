@@ -7,7 +7,7 @@ const API_URL = 'http://localhost:9090/api/';
 class SupplierService {
 
     getAllSuppliers() {
-        return axios.get(API_URL + 'suppliers', {
+        return axios.get(API_URL + 'suppliers/all', {
             headers: authHeader()
         });
     }

@@ -98,7 +98,7 @@ class UserDetailComponent extends Component {
                         </div>
                     </div>
                 </Panel>
-                <div style={{ float: 'right' }}>
+                <div className="buttons">
                     <Button label="Save" icon="pi pi-save" style={{ marginRight: '5px' }} onClick={() => this.saveUser()}></Button>
                 </div>
             </div>

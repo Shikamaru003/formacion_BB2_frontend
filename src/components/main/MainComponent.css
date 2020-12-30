@@ -41,4 +41,8 @@
         border-bottom: 1px solid var(--surface-d);
     }
 
+    .buttons {
+        padding: 5px;
+        float: right;
+    }
 }
