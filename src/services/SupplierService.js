@@ -4,7 +4,7 @@ import authHeader from './auth-header';
 
 const API_URL = 'http://localhost:9090/api/';
 
-class SupplierService {
+class supplierService {
 
     getAllSuppliers() {
         return axios.get(API_URL + 'suppliers/all', {
@@ -19,4 +19,4 @@ class SupplierService {
     }
 }
 
-export default new SupplierService();
+export default new supplierService();

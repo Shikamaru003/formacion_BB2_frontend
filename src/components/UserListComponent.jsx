@@ -6,8 +6,8 @@ import { Messages } from 'primereact/messages';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 
-import AuthenticationService from '../services/AuthenticationService';
-import UserService from '../services/UserService';
+import AuthenticationService from '../services/authenticationService';
+import UserService from '../services/userService';
 
 class UserListComponent extends Component {
 

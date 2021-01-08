@@ -4,7 +4,7 @@ import authHeader from './auth-header';
 
 const API_URL = 'http://localhost:9090/api/';
 
-class PriceReductionService {
+class priceReductionService {
 
     getAllPriceReductions() {
         return axios.get(API_URL + 'price_reductions', {
@@ -19,4 +19,4 @@ class PriceReductionService {
     }
 }
 
-export default new PriceReductionService();
+export default new priceReductionService();

@@ -1,10 +1,18 @@
-import React from 'react';
-import { render } from '@testing-library/react';
-import App from './App';
 
-test('renders learn react link', () => {
-  const { getByText } = render(<App />);
-  const linkElement = getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+import axios from 'axios'
+import { products } from './products';
+
+jest.mock('axios');
+
+it('test call to api/products', async () => {
+  axios.get.mockResolvedValue('api/products', {
+    params: {
+        page: 0,
+        size: 10,
+        sortField: '',
+        sortOrder: 1
+    },
 });
-
+  
+  await expect(products('react')).resolves.toHaveLength(10)
+});

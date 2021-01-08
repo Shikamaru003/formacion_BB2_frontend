@@ -3,7 +3,7 @@ import authHeader from './auth-header';
 
 const API_URL = 'http://localhost:9090/api';
 
-class UserService {
+class userService {
 
     getAllUsers() {
         return axios.get(API_URL + '/users/all', {
@@ -49,4 +49,4 @@ class UserService {
 
 }
 
-export default new UserService();
+export default new userService();

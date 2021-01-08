@@ -10,10 +10,10 @@ import { Button } from 'primereact/button';
 import { Messages } from 'primereact/messages';
 import { Dialog } from 'primereact/dialog';
 
-import ProductService from '../services/ProductService.js'
-import SupplierService from '../services/SupplierService.js'
-import PriceReductionService from '../services/PriceReductionService.js'
-import AuthenticationService from '../services/AuthenticationService.js';
+import {getProductByIdService, saveProductService, updateProductService, deleteProductService} from '../../services/productService.js'
+import supplierService from '../../services/supplierService.js'
+import priceReductionService from '../../services/priceReductionService.js'
+import authenticationService from '../../services/authenticationService.js';
 
 class ProductDetailComponent extends Component {
 
@@ -26,7 +26,7 @@ class ProductDetailComponent extends Component {
                 description: '',
                 state: 'ACTIVE',
                 price: 0,
-                creator: AuthenticationService.getCurrentUser().username,
+                creator: authenticationService.getCurrentUser().username,
                 creationDate: new Date(),
                 priceReductions: [],
                 suppliers: []
@@ -36,16 +36,17 @@ class ProductDetailComponent extends Component {
         };
 
         this.states = ['ACTIVE', 'DISCONTINUED'];
+        
     }
 
     componentDidMount() {
         if (this.props.match.params.id === '-1') {
-            SupplierService.getAllSuppliers().then(
+            supplierService.getAllSuppliers().then(
                 (suppliers) => {
                     this.setState({ availableSuppliers: suppliers.data })
                 }
             );
-            PriceReductionService.getAllPriceReductions().then(
+            priceReductionService.getAllPriceReductions().then(
                 (priceReductions) => {
                     this.setState({ availablePriceReductions: priceReductions.data })
                 }
@@ -56,19 +57,19 @@ class ProductDetailComponent extends Component {
     }
 
     loadProduct(id) {
-        ProductService.getProductById(id).then(
+        getProductByIdService(id).then(
             response => {
                 this.setState({ product: response.data });
                 if (this.state.product.id == null) {
                     this.props.history.push('/products');
                 }
                 else {
-                    SupplierService.getAvailableSuppliers(this.state.product.id).then(
+                    supplierService.getAvailableSuppliers(this.state.product.id).then(
                         (suppliers) => {
                             this.setState({ availableSuppliers: suppliers.data })
                         }
                     );
-                    PriceReductionService.getAvailablePriceReductions(this.state.product.id).then(
+                    priceReductionService.getAvailablePriceReductions(this.state.product.id).then(
                         (priceReductions) => {
                             this.setState({ availablePriceReductions: priceReductions.data })
                         }
@@ -88,7 +89,7 @@ class ProductDetailComponent extends Component {
             });
         }
 
-        ProductService.saveProduct(this.state.product).then(
+        saveProductService(this.state.product).then(
             response => {
                 this.setState({ product: response.data });
                 this.props.history.push(`./${this.state.product.id}`);
@@ -111,7 +112,7 @@ class ProductDetailComponent extends Component {
             });
         }
 
-        ProductService.updateProduct(this.state.product).then(
+        updateProductService(this.state.product).then(
             () => {
                 this.messages.show({
                     severity: 'success', summary: '', detail: 'Product updated!'
@@ -127,7 +128,7 @@ class ProductDetailComponent extends Component {
 
     deleteProduct() {
         this.setState({ showDialog: false })
-        ProductService.deleteProduct(this.state.product.id).then(
+       deleteProductService(this.state.product.id).then(
             () => {
                 this.props.history.push({
                     pathname: '/products',
