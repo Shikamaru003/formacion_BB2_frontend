@@ -3,17 +3,18 @@ import authHeader from './auth-header';
 
 const API_URL = 'http://localhost:9090/api';
 
-export function getAllProducts() {
+export function getAllProductsService(successCallback) {
     axios.get(API_URL + '/products/all', {
         headers: authHeader()
-    }).then(
-        response => {
-            return (response.data);
-        }
-    )
+    })
+        .then(
+            response => {
+                successCallback(response.data);
+            }
+        )
 }
 
-export function getProductsService(page, size, sortField, sortOrder, messages, handleData) {
+export function getProductsService(page, size, sortField, sortOrder, successCallback, messagesCallBack) {
     axios.get(API_URL + '/products', {
         params: {
             page: page,
@@ -24,44 +25,110 @@ export function getProductsService(page, size, sortField, sortOrder, messages, h
         headers: authHeader()
     })
         .then(
-            response => {
-                handleData(response.data)
+            (response) => {
+                successCallback(response)
             })
         .catch(
-            error => {
-                messages.current.show({
-                    severity: 'error', summary: error, detail: 'Error loading products!'
+            (error) => {
+                messagesCallBack({
+                    severity: 'error',
+                    summary: 'Error loading products!',
+                    detail: (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
                 });
             }
         )
 }
 
-export function getProductByIdService(id) {
-    return axios.get(API_URL + `/products/${id}`, {
+export function getProductByIdService(id, successCallback, messagesCallBack) {
+    axios.get(API_URL + `/products/${id}`, {
         headers: authHeader()
-    });
+    })
+        .then(
+            (response) => {
+                successCallback(response)
+            })
+        .catch(
+            (error) => {
+                messagesCallBack({
+                    severity: 'error',
+                    summary: `Error loading product with id ${id}!`,
+                    detail: (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
+                });
+            }
+        );
 }
 
-export function saveProductService(product) {
-    return axios.post(API_URL + `/products`, product, {
+export function saveProductService(product, successCallback, messagesCallBack) {
+    axios.post(API_URL + `/products`, product, {
         headers: authHeader()
-    });
+    })
+        .then(
+            (response) => {
+                successCallback(response);
+                messagesCallBack({
+                    severity: 'success', summary: `Product updated!`, detail: ''
+                });
+            })
+        .catch(
+            (error) => {
+                messagesCallBack({
+                    severity: 'error',
+                    summary: 'Error saving product! ',
+                    detail: (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
+                });
+            }
+        );
 }
 
-export function updateProductService(product) {
-    return axios.put(API_URL + `/products/${product.id}`, product, {
+export function updateProductService(product, successCallback, messagesCallBack) {
+    axios.put(API_URL + `/products/${product.id}`, product, {
         headers: authHeader()
-    });
+    })
+        .then(
+            (response) => {
+                successCallback(response);
+                messagesCallBack({
+                    severity: 'success',
+                    summary: `Product updated!`,
+                    detail: ''
+                });
+            })
+        .catch(
+            (error) => {
+                messagesCallBack({
+                    severity: 'error',
+                    summary: 'Error updating product!',
+                    detail: `(${(error.response && error.response.data && error.response.data.message) || error.message || error.toString()})`
+                });
+            }
+        );
 }
 
-export function deleteProductService(id) {
-    console.log('deleteProduct')
-    return axios.delete(API_URL + `/products/${id}`, {
+export function deleteProductService(id, successCallback, messagesCallBack) {
+    axios.delete(API_URL + `/products/${id}`, {
         headers: authHeader()
-    });
+    })
+        .then(
+            () => {
+                successCallback();
+                messagesCallBack({
+                    severity: 'success',
+                    summary: `Product with id ${id} deleted!`,
+                    detail: ''
+                });
+            })
+        .catch(
+            (error) => {
+                messagesCallBack({
+                    severity: 'error',
+                    summary: 'Error deleting product!',
+                    detail: (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
+                });
+            }
+        );
 }
 
-export function deactivateProductService(id, reason, username, page, rows, sortField, sortOrder, messages, handleData) {
+export function deactivateProductService(id, reason, username, successCallback, messagesCallBack) {
     axios.delete(API_URL + `/products/${id}/deactivate`, {
         params: {
             reason: reason,
@@ -71,15 +138,19 @@ export function deactivateProductService(id, reason, username, page, rows, sortF
     })
         .then(
             () => {
-                this.getProducts(page, rows, sortField, sortOrder, messages, handleData);
-                messages.current.show({
-                    severity: 'success', summary: '', detail: `Product with id ${id} deactivated!`
+                successCallback();
+                messagesCallBack({
+                    severity: 'success',
+                    summary: `Product with id ${id} deactivated!`,
+                    detail: ''
                 });
-            }
-        ).catch(
-            () => {
-                messages.current.show({
-                    severity: 'error', summary: '', detail: 'Error deactivating product!'
+            })
+        .catch(
+            (error) => {
+                messagesCallBack({
+                    severity: 'error',
+                    summary: 'Error deactivating product!',
+                    detail: (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
                 });
             }
         );

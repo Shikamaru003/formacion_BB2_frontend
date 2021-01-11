@@ -3,7 +3,7 @@ import { Menubar } from 'primereact/menubar';
 import { Button } from 'primereact/button';
 import { withRouter } from 'react-router';
 
-import AuthenticationService from '../../services/authenticationService';
+import { getCurrentUser, isAdmin, isLoggedIn, logout } from '../../services/authenticationService';
 
 class HeaderComponent extends Component {
 
@@ -19,7 +19,7 @@ class HeaderComponent extends Component {
     }
 
     componentDidMount() {
-        const user = AuthenticationService.getCurrentUser();
+        const user = getCurrentUser();
 
         if (user) {
             this.setState({
@@ -35,14 +35,14 @@ class HeaderComponent extends Component {
     }
 
     onLogoutClick() {
-        AuthenticationService.logout();
+        logout();
         this.navigateToPage('/login');
     }
 
     render() {
         let menu_items = [];
 
-        if (AuthenticationService.isLoggedIn()) {
+        if (isLoggedIn()) {
             menu_items.push(
                 {
                     label: 'Products',
@@ -52,7 +52,7 @@ class HeaderComponent extends Component {
                     }
                 }
             )
-            if (AuthenticationService.isAdmin()) {
+            if (isAdmin()) {
                 menu_items.push(
                     {
                         label: 'Users',
@@ -78,7 +78,7 @@ class HeaderComponent extends Component {
 
         return (
             <div className="header">
-                <Menubar model={menu_items} end={AuthenticationService.isLoggedIn() && <Button icon="pi pi-power-off" label="Logout" className="p-button-rounded" onClick={this.onLogoutClick}></Button>}></Menubar>
+                <Menubar model={menu_items} end={isLoggedIn() && <Button icon="pi pi-power-off" label="Logout" className="p-button-rounded" onClick={this.onLogoutClick}></Button>}></Menubar>
             </div>
         );
     }

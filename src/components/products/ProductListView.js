@@ -9,7 +9,7 @@ import { Dialog } from 'primereact/dialog';
 import { InputTextarea } from 'primereact/inputtextarea';
 
 import { getProductsService, deleteProductService, deactivateProductService } from '../../services/productService.js'
-import authenticationService from '../../services/authenticationService.js'
+import { getCurrentUser, isAdmin } from '../../services/authenticationService';
 
 export default function ProductListView() {
     const [products, setProducts] = useState([]);
@@ -28,22 +28,31 @@ export default function ProductListView() {
 
 
     useEffect(() => {
-        getProductsService(page, rows, sortField, sortOrder, (data) => { setProducts(data.content); setTotalElements(data.totalElements) });
+        loadProducts();
 
         if (history.location.state) {
             messages.current.show(history.location.state.message);
         }
 
-    }, [history.location.state, page, rows, sortField, sortOrder]);
+    }, []);
+
+    function loadProducts() {
+        getProductsService(page, rows, sortField, sortOrder,
+            (response) => { setProducts(response.data.content); setTotalElements(response.data.totalElements); },
+            (message) => messages.current.show(message)
+        )
+    }
 
     function onPage(event) {
         getProductsService(event.page, rows, sortField, sortOrder,
-            (data) => { setProducts(data.content); setPage(event.page); setFirst(event.first); });
+            (response) => { setProducts(response.data.content); setPage(event.page); setFirst(event.first); },
+            (message) => messages.current.show(message));
     }
 
     function onSort(event) {
         getProductsService(page, rows, event.sortField, event.sortOrder,
-            (data) => { setProducts(data.content); setSortField(event.sortField); setSortOrder(event.sortOrder); });
+            (response) => { setProducts(response.data.content); setSortField(event.sortField); setSortOrder(event.sortOrder); },
+            (message) => messages.current.show(message));
     }
 
     function newProduct() {
@@ -55,16 +64,18 @@ export default function ProductListView() {
     }
 
     function deleteProduct(id) {
-        deleteProductService(id, page, rows, sortField, sortOrder, messages,
-            (data) => { setProducts(data.content); setTotalElements(data.totalElements); setShowDeleteDialog(false); })
+        setShowDeleteDialog(false);
+        deleteProductService(id,
+            () => loadProducts(),
+            (message) => messages.current.show(message));
     }
 
     function deactiveProduct(id) {
-        deactivateProductService(id, deactivateReason, authenticationService.getCurrentUser().username, page, rows, sortField, sortOrder,
-            (data) => { setProducts(data.content); setTotalElements(data.totalElements) },
-            messages)
         setShowDeactivateDialog(false);
         setDeactivateReason('');
+        deactivateProductService(id, deactivateReason, getCurrentUser().username,
+            () => loadProducts(),
+            (message) => messages.current.show(message));
     }
 
     function priceTemplate(rowData) {
@@ -103,7 +114,7 @@ export default function ProductListView() {
             <div style={{ textAlign: 'right' }}>
                 {rowData.state === 'ACTIVE' && <Button icon="pi pi-pencil" className="p-button-rounded p-button-text" tooltip="Edit" onClick={() => editProduct(rowData.id)} />}
                 {rowData.state === 'ACTIVE' && <Button icon="pi pi-ban" className="p-button-rounded p-button-warning p-button-text" tooltip="Deactive" onClick={() => { setShowDeactivateDialog(true); setSelectedItemId(rowData.id); }} />}
-                {authenticationService.isAdmin() && <Button icon="pi pi-trash" className="p-button-rounded p-button-danger p-button-text" tooltip="Delete" onClick={() => { setShowDeleteDialog(true); setSelectedItemId(rowData.id); }}></Button>}
+                {isAdmin() && <Button icon="pi pi-trash" className="p-button-rounded p-button-danger p-button-text" tooltip="Delete" onClick={() => { setShowDeleteDialog(true); setSelectedItemId(rowData.id); }}></Button>}
             </div>
         )
     }

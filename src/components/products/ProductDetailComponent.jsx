@@ -10,10 +10,10 @@ import { Button } from 'primereact/button';
 import { Messages } from 'primereact/messages';
 import { Dialog } from 'primereact/dialog';
 
-import {getProductByIdService, saveProductService, updateProductService, deleteProductService} from '../../services/productService.js'
+import { getProductByIdService, saveProductService, updateProductService, deleteProductService } from '../../services/productService.js'
 import supplierService from '../../services/supplierService.js'
 import priceReductionService from '../../services/priceReductionService.js'
-import authenticationService from '../../services/authenticationService.js';
+import { getCurrentUser } from '../../services/authenticationService';
 
 class ProductDetailComponent extends Component {
 
@@ -26,7 +26,7 @@ class ProductDetailComponent extends Component {
                 description: '',
                 state: 'ACTIVE',
                 price: 0,
-                creator: authenticationService.getCurrentUser().username,
+                creator: getCurrentUser().username,
                 creationDate: new Date(),
                 priceReductions: [],
                 suppliers: []
@@ -36,7 +36,7 @@ class ProductDetailComponent extends Component {
         };
 
         this.states = ['ACTIVE', 'DISCONTINUED'];
-        
+
     }
 
     componentDidMount() {
@@ -57,8 +57,8 @@ class ProductDetailComponent extends Component {
     }
 
     loadProduct(id) {
-        getProductByIdService(id).then(
-            response => {
+        getProductByIdService(id,
+            (response) => {
                 this.setState({ product: response.data });
                 if (this.state.product.id == null) {
                     this.props.history.push('/products');
@@ -76,7 +76,7 @@ class ProductDetailComponent extends Component {
                     );
                 }
             },
-            error => {
+            (message) => {
                 this.props.history.push('/products')
             }
         )
@@ -87,22 +87,15 @@ class ProductDetailComponent extends Component {
             this.messages.show({
                 severity: 'error', summary: '', detail: 'Product Code and Description can´t be empty!'
             });
+        } else {
+            saveProductService(this.state.product,
+                (response) => {
+                    this.setState({ product: response.data });
+                    this.props.history.push(`./${this.state.product.id}`);
+                },
+                (message) => this.messages.show(message)
+            );
         }
-
-        saveProductService(this.state.product).then(
-            response => {
-                this.setState({ product: response.data });
-                this.props.history.push(`./${this.state.product.id}`);
-                this.messages.show({
-                    severity: 'success', summary: '', detail: 'Product saved!'
-                });
-            },
-            error => {
-                this.messages.show({
-                    severity: 'error', summary: '', detail: 'Error saving product!'
-                });
-            }
-        );
     }
 
     updateProduct() {
@@ -111,40 +104,27 @@ class ProductDetailComponent extends Component {
                 severity: 'error', summary: '', detail: 'Product Code and Description can´t be empty!'
             });
         }
-
-        updateProductService(this.state.product).then(
-            () => {
-                this.messages.show({
-                    severity: 'success', summary: '', detail: 'Product updated!'
-                });
-            },
-            error => {
-                this.messages.show({
-                    severity: 'error', summary: '', detail: 'Error updating product!'
-                });
-            }
-        );
+        else {
+            updateProductService(this.state.product,
+                (response) => {
+                    this.setState({ product: response.data });
+                },
+                (message) => {
+                    console.log(message)
+                    this.messages.show(message);
+                }
+            );
+        }
     }
 
     deleteProduct() {
         this.setState({ showDialog: false })
-       deleteProductService(this.state.product.id).then(
+        deleteProductService(this.state.id,
             () => {
-                this.props.history.push({
-                    pathname: '/products',
-                    state: {
-                        message: {
-                            severity: 'success', summary: '', detail: `Product with id ${this.state.product.id} deleted!`
-                        }
-                    }
-                })
+                this.props.history.push('./products');
             },
-            error => {
-                this.messages.show({
-                    severity: 'error', summary: '', detail: 'Error deleting product!'
-                });
-            }
-        );
+            (message) => console.log(message)
+        )
     }
 
     onChange(event) {

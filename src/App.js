@@ -9,12 +9,12 @@ import UserListComponent from './components/UserListComponent';
 import UserDetailComponent from './components/UserDetailComponet';
 import AuthenticatedRoute from './components/AuthenticatedRoute';
 
-import authenticationService from './services/authenticationService'
+import {isLoggedIn} from './services/authenticationService';
 
 import './App.css';
 import './primereact.css';
 
-function App() {
+export default function App() {
 
   const [theme] = useState('saga-blue');
 
@@ -32,12 +32,10 @@ function App() {
           <AuthenticatedRoute exact path="/products/:id" component={ProductDetailComponent} />
           <AuthenticatedRoute exact path="/users" component={UserListComponent} />
           <AuthenticatedRoute exact path="/users/:id" component={UserDetailComponent} />
-          <Redirect to={authenticationService.isLoggedIn() ? "/products" : "/login"} />
+          <Redirect to={isLoggedIn() ? "/products" : "/login"} />
         </Switch>
       </Router>
     </div>
   );
 
 }
-
-export default App;

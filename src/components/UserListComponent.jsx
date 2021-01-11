@@ -6,7 +6,7 @@ import { Messages } from 'primereact/messages';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 
-import AuthenticationService from '../services/authenticationService';
+import { getCurrentUser, isAdmin } from '../services/authenticationService';
 import UserService from '../services/userService';
 
 class UserListComponent extends Component {
@@ -31,7 +31,7 @@ class UserListComponent extends Component {
             this.messages.show(this.props.history.location.state.message);
         }
 
-        if (!AuthenticationService.isAdmin()) {
+        if (!isAdmin()) {
             this.props.history.push('/products')
         } else {
             UserService.getUsers(0, this.state.rows, this.state.sortField, this.state.sortOrder).then(
@@ -84,7 +84,7 @@ class UserListComponent extends Component {
                 });
             }
         );
-        this.setState({ showDialog: false});
+        this.setState({ showDialog: false });
     }
 
     dialogFooter() {
@@ -97,7 +97,7 @@ class UserListComponent extends Component {
     }
 
     buttonsTemplate(rowData) {
-        if (AuthenticationService.getCurrentUser().username !== rowData.username) {
+        if (getCurrentUser().username !== rowData.username) {
             return (
                 <div>
                     <Button icon="pi pi-trash" className="p-button-rounded p-button-danger p-button-text" onClick={() => this.setState({ showDialog: true, selectedItemId: rowData.id })} />

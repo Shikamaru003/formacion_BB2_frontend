@@ -5,7 +5,7 @@ import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Messages } from 'primereact/messages';
 
-import authenticationService from '../../services/authenticationService.js';
+import { loginService, isLoggedIn } from '../../services/authenticationService.js';
 
 export default function LoginView() {
 
@@ -15,24 +15,18 @@ export default function LoginView() {
     const messages = useRef(null);
 
     useEffect(() => {
-        if (authenticationService.isLoggedIn()) {
+        if (isLoggedIn()) {
             history.push('products');
         }
-    });
+    }, [history]);
 
     function login() {
-        authenticationService.login(username, password).then(
-            () => {
+        loginService(username, password,
+            (response) => {
+                sessionStorage.setItem('user', JSON.stringify({ username: username, password: password, roles: response.data, accessToken: response.headers.authorization }));
                 history.push('products');
-            })
-            .catch(
-                error => {
-                    console.log(error.response)
-                    const message =
-                        (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
-                    messages.current.show({ severity: 'error', summary: '', detail: message });
-                }
-            );
+            },
+            (message) => messages.current.show(message))
     }
 
     return (
@@ -55,7 +49,7 @@ export default function LoginView() {
                         </div>
                     </div>
                     <div className="p-field" style={{ textAlign: 'center' }}>
-                        <Button label="Login" disabled={!username || !password} onClick={login} />
+                        <Button label="Login" disabled={!username || !password} onClick={() => login()} />
                     </div>
                     <Messages ref={messages}></Messages>
                 </div>
