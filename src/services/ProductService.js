@@ -1,14 +1,23 @@
 import axios from 'axios'
 import authHeader from './auth-header';
-import * as Constants from '../constants/AppConstants'
+import * as Constants from '../constants/Constants'
 
-export function getAllProductsService(successCallback) {
+export function getAllProductsService(successCallback, errorCallBack) {
     axios.get(Constants.API_URL + '/products/all', {
         headers: authHeader()
     })
         .then(
             response => {
                 successCallback(response.data);
+            })
+        .catch(
+            (error) => {
+                console.log('error', error)
+                errorCallBack({
+                    severity: 'error',
+                    summary: 'Error loading products!',
+                    detail: (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
+                });
             }
         )
 }
@@ -118,7 +127,7 @@ export function deleteProductService(id, successCallback, errorCallBack) {
                 errorCallBack({
                     severity: 'error',
                     summary: 'Error deleting product!',
-                    detail: (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
+                    detail: error.toString()
                 });
             }
         );

@@ -18,14 +18,17 @@ export default function LoginView() {
         if (isLoggedIn()) {
             history.push('products');
         }
-    }, [history]);
+    }, []);
 
     function login() {
+        console.log('login')
         loginService(username, password,
             () => {
+                console.log('push')
                 history.push('products');
             },
-            (error_message) => messages.current.show(error_message))
+            (error_message) => messages.current.show(error_message)
+        )
     }
 
     return (
@@ -53,7 +56,7 @@ export default function LoginView() {
                     <Messages ref={messages}></Messages>
                 </div>
             </div>
-        </div >
+        </div>
     )
 }
 

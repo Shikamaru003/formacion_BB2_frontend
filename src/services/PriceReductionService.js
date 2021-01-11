@@ -1,10 +1,10 @@
 import axios from 'axios'
 import authHeader from './auth-header';
 
-import * as Constants from '../constants/AppConstants'
+import * as Constants from '../constants/Constants'
 
 export function getAllPriceReductionsService(successCallback, errorCallBack) {
-    axios.get(Constants.API_URL + 'price_reductions', {
+    axios.get(Constants.API_URL + '/price_reductions', {
         headers: authHeader()
     })
         .then(
@@ -23,7 +23,7 @@ export function getAllPriceReductionsService(successCallback, errorCallBack) {
 }
 
 export function getAvailablePriceReductionsService(id, successCallback, errorCallBack) {
-    axios.get(Constants.API_URL + `products/${id}/available_price_reductions`, {
+    axios.get(Constants.API_URL + `/products/${id}/available_price_reductions`, {
         headers: authHeader()
     })
         .then(

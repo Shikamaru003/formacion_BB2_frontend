@@ -7,7 +7,7 @@ import { Dropdown } from 'primereact/dropdown';
 import { Button } from 'primereact/button';
 import { Messages } from 'primereact/messages';
 
-import { saveUserService } from '../services/userService.js'
+import { saveUserService } from '../../services/userService.js'
 
 export default function UserDetailView() {
 
@@ -24,9 +24,8 @@ export default function UserDetailView() {
         }
         else {
             saveUserService(user,
-                response => {
-                    setUser(response.data);
-                    sessionStorage.setItem('message', JSON.stringify({ severity: 'success', summary: '', detail: `User created!` }));
+                (response, message) => {
+                    sessionStorage.setItem('message', JSON.stringify(message));
                     history.push('/users');
                 },
                 (error_message) => {

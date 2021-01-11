@@ -5,9 +5,9 @@ import ProductListView from './components/products/ProductListView';
 import ProductDetailComponent from './components/products/ProductDetailView';
 import HeaderComponent from './components/header/HeaderComponent';
 import LoginView from './components/login/LoginView';
-import UserListComponent from './components/UserListView';
-import UserDetailComponent from './components/UserDetailViewjs';
-import AuthenticatedRoute from './components/AuthenticatedRoute';
+import UserListComponent from './components/users/UserListView';
+import UserDetailComponent from './components/users/UserDetailView';
+import AuthenticatedRoute from './components/authentication/AuthenticatedRoute';
 
 import {isLoggedIn} from './services/authenticationService';
 

@@ -1,6 +1,6 @@
 import axios from 'axios'
 import authHeader from './auth-header';
-import * as Constants from '../constants/AppConstants'
+import * as Constants from '../constants/Constants'
 
 export function getAllSuppliersService(successCallback, errorCallBack) {
     axios.get(Constants.API_URL + '/suppliers/all', {

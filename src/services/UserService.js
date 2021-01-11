@@ -1,6 +1,6 @@
 import axios from 'axios'
 import authHeader from './auth-header';
-import * as Constants from '../constants/AppConstants'
+import * as Constants from '../constants/Constants'
 
 export function getAllUsersService() {
     axios.get(Constants.API_URL + '/users/all', {
@@ -80,8 +80,8 @@ export function deleteUserService(id, successCallback, errorCallBack) {
         headers: authHeader()
     })
         .then(
-            (response) => {
-                successCallback(response, {
+            () => {
+                successCallback( {
                     severity: 'success',
                     summary: `User with id ${id} deleted!`,
                     detail: ''

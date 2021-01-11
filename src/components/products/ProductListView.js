@@ -27,31 +27,32 @@ export default function ProductListView() {
     const messages = useRef(null);
 
     useEffect(() => {
-        loadProducts();
+        loadProducts(page, rows, sortField, sortOrder);
 
-        if (history.location.state && history.location.state.message) {
-            messages.current.show(history.location.state.message);
+        if (sessionStorage.getItem('message') !== null) {
+            messages.current.show(JSON.parse(sessionStorage.getItem('message')));
+            sessionStorage.removeItem('message');
         }
 
     }, []);
 
-    function loadProducts() {
+    function loadProducts(page, rows, sortField, sortOrder) {
         getProductsService(page, rows, sortField, sortOrder,
             (response) => { setProducts(response.data.content); setTotalElements(response.data.totalElements); },
-            (message) => messages.current.show(message)
-        )
+            (error_message) => messages.current.show(error_message)
+        );
     }
 
     function onPage(event) {
-        getProductsService(event.page, rows, sortField, sortOrder,
-            (response) => { setProducts(response.data.content); setPage(event.page); setFirst(event.first); },
-            (message) => messages.current.show(message));
+        setPage(event.page);
+        setFirst(event.first);
+        loadProducts(event.page, rows, sortField, sortOrder);
     }
 
     function onSort(event) {
-        getProductsService(page, rows, event.sortField, event.sortOrder,
-            (response) => { setProducts(response.data.content); setSortField(event.sortField); setSortOrder(event.sortOrder); },
-            (message) => messages.current.show(message));
+        setSortField(event.sortField);
+        setSortOrder(event.sortOrder);
+        loadProducts(page, rows, event.sortField, event.sortOrder)
     }
 
     function newProduct() {
@@ -65,16 +66,18 @@ export default function ProductListView() {
     function deleteProduct(id) {
         setShowDeleteDialog(false);
         deleteProductService(id,
-            () => loadProducts(),
-            (message) => messages.current.show(message));
+            (message) => { loadProducts(page, rows, sortField, sortOrder); messages.current.show(message) },
+            (error_message) => messages.current.show(error_message)
+        );
     }
 
     function deactiveProduct(id) {
         setShowDeactivateDialog(false);
         setDeactivateReason('');
         deactivateProductService(id, deactivateReason, getCurrentUser().username,
-            () => loadProducts(),
-            (message) => messages.current.show(message));
+            (message) => { loadProducts(page, rows, sortField, sortOrder); messages.current.show(message) },
+            (error_message) => messages.current.show(error_message)
+        );
     }
 
     function priceTemplate(rowData) {

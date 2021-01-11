@@ -8,11 +8,12 @@ import { Calendar } from 'primereact/calendar';
 import { Dropdown } from 'primereact/dropdown';
 import { PickList } from 'primereact/picklist';
 import { Button } from 'primereact/button';
+import { Dialog } from 'primereact/dialog';
 import { Messages } from 'primereact/messages';
 
-import { getProductByIdService, saveProductService, updateProductService, deleteProductService } from '../../services/productService.js'
-import { getAllSuppliersService, getAvailableSuppliersService } from '../../services/supplierService.js'
-import { priceReductionService } from '../../services/priceReductionService.js'
+import { getProductByIdService, saveProductService, updateProductService, deleteProductService } from '../../services/productService.js';
+import { getAllSuppliersService, getAvailableSuppliersService } from '../../services/supplierService.js';
+import { getAllPriceReductionsService, getAvailablePriceReductionsService } from '../../services/priceReductionService.js';
 
 export default function ProductDetailView() {
     const [product, setProduct] = useState({});
@@ -24,28 +25,6 @@ export default function ProductDetailView() {
     const params = useParams();
     const messages = useRef(null);
 
-    // constructor(props) {
-    //     super(props);
-    //     state = {
-    //         product: {
-    //             id: null,
-    //             itemCode: null,
-    //             description: '',
-    //             state: 'ACTIVE',
-    //             price: 0,
-    //             creator: getCurrentUser().username,
-    //             creationDate: new Date(),
-    //             priceReductions: [],
-    //             suppliers: []
-    //         },
-    //         availableSuppliers: [],
-    //         availablePriceReductions: []
-    //     };
-
-    //     states = ['ACTIVE', 'DISCONTINUED'];
-
-    // }
-
     useEffect(() => {
         if (params.id === '-1') {
             getAllSuppliersService().then(
@@ -53,7 +32,7 @@ export default function ProductDetailView() {
                     setAvailableSuppliers(suppliers.data)
                 }
             );
-            priceReductionService.getAllPriceReductions().then(
+            getAllPriceReductionsService().then(
                 (priceReductions) => {
                     setAvailablePriceReductions(priceReductions)
                 }
@@ -66,25 +45,22 @@ export default function ProductDetailView() {
     function loadProduct(id) {
         getProductByIdService(id,
             (response) => {
-                console.log(response.data)
-                if (response.data === null) {
-                    history.push('/products');
-                }
-                else {
-                    setProduct(response.data);
-                    getAvailableSuppliersService(product.id).then(
-                        (suppliers) => {
-                            setAvailableSuppliers(suppliers.data)
-                        }
-                    );
-                    priceReductionService.getAvailablePriceReductions(product.id).then(
-                        (priceReductions) => {
-                            setAvailablePriceReductions(priceReductions.data)
-                        }
-                    );
-                }
+                setProduct(response.data);
+                getAvailableSuppliersService(response.data.id,
+                    (suppliers) => {
+                        setAvailableSuppliers(suppliers.data)
+                    },
+                    (error_message) => messages.current.show(error_message)
+                );
+                getAvailablePriceReductionsService(response.data.id,
+                    (priceReductions) => {
+                        setAvailablePriceReductions(priceReductions.data)
+                    },
+                    (error_message) => messages.current.show(error_message)
+                );
             },
-            (message) => {
+            (error_message) => {
+                sessionStorage.setItem('message', JSON.stringify(error_message));
                 history.push('/products')
             }
         )
@@ -93,15 +69,16 @@ export default function ProductDetailView() {
     function saveProduct() {
         if (product.description === '' || product.itemCode === null) {
             messages.show({
-                severity: 'error', summary: '', detail: 'Product Code and Description can´t be empty!'
+                severity: 'error', summary: 'Product Code and Description can´t be empty!', detail: ''
             });
         } else {
             saveProductService(product,
-                (response) => {
+                (response, message) => {
                     setProduct(response.data);
                     history.push(`products/${product.id}`);
+                    messages.current.show(message);
                 },
-                (message) => messages.show(message)
+                (error_message) => messages.current.show(error_message)
             );
         }
     }
@@ -109,32 +86,29 @@ export default function ProductDetailView() {
     function updateProduct() {
         if (product.description === '' || product.itemCode === null) {
             messages.show({
-                severity: 'error', summary: '', detail: 'Product Code and Description can´t be empty!'
+                severity: 'error', summary: 'Product Code and Description can´t be empty!', detail: ''
             });
         }
         else {
             updateProductService(product,
-                (response) => {
+                (response, message) => {
                     setProduct(response.data);
-                },
-                (message) => {
                     messages.current.show(message);
-                }
+                },
+                (error_message) => messages.current.show(error_message)
             );
         }
     }
 
     function deleteProduct() {
-        showDeleteDialog(false);
+        setShowDeleteDialog(false);
         deleteProductService(product.id,
-            () => {
+            (message) => {
+                sessionStorage.setItem('message', JSON.stringify(message))
                 history.push('/products');
             },
-            (message) => history.push({
-                pathname: '/products',
-                state: { message: message }
-            })
-        )
+            (error_message) => messages.current.show(error_message)
+        );
     }
 
     function onChange(event) {
@@ -165,7 +139,9 @@ export default function ProductDetailView() {
         return (
             <div className="price-reduction-item">
                 <h4 className="price-reduction-price">{item.reducedPrice}</h4>
-                <div className="price-reduction-dates">(From <b>{new Date(item.startDate).toLocaleDateString()}</b> To <b>{new Date(item.endDate).toLocaleDateString()}</b>)</div>
+                <div className="price-reduction-dates">
+                    (From <b>{new Date(item.startDate).toLocaleDateString()}</b> To <b>{new Date(item.endDate).toLocaleDateString()}</b>)
+                </div>
             </div>
         );
     }
@@ -173,30 +149,30 @@ export default function ProductDetailView() {
     function dialogFooter() {
         return (
             <div>
-                <Button label="No" icon="pi pi-times" onClick={() => showDeleteDialog(false)} />
+                <Button label="No" icon="pi pi-times" onClick={() => setShowDeleteDialog(false)} />
                 <Button label="Yes" icon="pi pi-check" onClick={() => deleteProduct()} />
             </div>
         );
     }
 
-    // render() {
-    //     let buttons;
-    //     if (product.id === null) {
-    //         buttons = <Button label="Save" icon="pi pi-save" onClick={() => saveProduct()}></Button>
-    //     } else {
-    //         buttons =
-    //             <div>
-    //                 <Button label="Update" icon="pi pi-save" style={{ marginRight: '5px' }} onClick={() => updateProduct()}></Button>
-    //                 <Button label="Delete" icon="pi pi-trash" className="p-button-danger" style={{ marginRight: '5px' }} onClick={() => setState({ showDialog: true })}></Button>
-    //                 <Dialog header="Confirmation" visible={showDialog} footer={dialogFooter()} onHide={() => setState({ showDialog: false })}>
-    //                     <div className="confirmation-content">
-    //                         <i className="pi pi-exclamation-triangle p-mr-3" style={{ fontSize: '2rem' }} />
-    //                         <span>Are you sure you want to proceed?</span>
-    //                     </div>
-    //                 </Dialog>
-    //             </div>
-    //     }
-    // }
+    function buttons() {
+        if (product.id === null) {
+            return <Button label="Save" icon="pi pi-save" onClick={() => saveProduct()}></Button>
+        } else {
+            return (
+                <div>
+                    <Button label="Update" icon="pi pi-save" style={{ marginRight: '5px' }} onClick={() => updateProduct()}></Button>
+                    <Button label="Delete" icon="pi pi-trash" className="p-button-danger" style={{ marginRight: '5px' }} onClick={() => setShowDeleteDialog(true)}></Button>
+                    <Dialog header="Confirmation" visible={showDeleteDialog} footer={dialogFooter()} onHide={() => setShowDeleteDialog(false)}>
+                        <div className="confirmation-content">
+                            <i className="pi pi-exclamation-triangle p-mr-3" style={{ fontSize: '2rem' }} />
+                            <span>Are you sure you want to proceed?</span>
+                        </div>
+                    </Dialog>
+                </div>
+            )
+        }
+    }
 
     return (
         <div className="productDetail">
@@ -205,11 +181,11 @@ export default function ProductDetailView() {
                 <div className="p-fluid p-formgrid p-grid">
                     <div className="p-field p-col-3">
                         <label htmlFor="itemCode">Code</label>
-                        <InputNumber id="itemCode" value={product.itemCode} useGrouping={false} onValueChange={(e) => onChange(e)} disabled={params.id !== '-1'} />
+                        <InputNumber id="itemCode" value={product.itemCode} useGrouping={false} onValueChange={(event) => onChange(event)} disabled={params.id !== '-1'} />
                     </div>
                     <div className="p-field p-col-9">
                         <label htmlFor="description">Description</label>
-                        <InputText id="description" type="text" value={product.description} onChange={(e) => onChange(e)} />
+                        <InputText id="description" type="text" value={product.description} onChange={(event) => onChange(event)} />
                     </div>
                     <div className="p-field p-col-3">
                         <label htmlFor="creator">Creator</label>
@@ -217,34 +193,34 @@ export default function ProductDetailView() {
                     </div>
                     <div className="p-field p-col-3">
                         <label htmlFor="state">State</label>
-                        <Dropdown id="state" value={product.state} options={states} onChange={(e) => onChange(e)} disabled />
+                        <Dropdown id="state" value={product.state} options={states} onChange={(event) => onChange(event)} disabled />
                     </div>
                     <div className="p-field p-col-3">
                         <label htmlFor="price">Price</label>
-                        <InputNumber id="price" value={product.price} mode="currency" currency="EUR" onValueChange={(e) => onChange(e)} />
+                        <InputNumber id="price" value={product.price} mode="currency" currency="EUR" onValueChange={(event) => onChange(event)} />
                     </div>
                     <div className="p-field p-col-3">
                         <label htmlFor="creationDate">Creation Date</label>
-                        <Calendar id="creationDate" readOnly="{true}" value={new Date(product.creationDate)} onChange={(e) => onChange(e)} showIcon disabled={params.id === '-1'} />
+                        <Calendar id="creationDate" readOnly="{true}" value={new Date(product.creationDate)} onChange={(event) => onChange(event)} showIcon disabled={params.id === '-1'} />
                     </div>
                     <div className="p-field p-col-12" style={{ textAlign: 'center' }}>
                         <label htmlFor="suppliers">Suppliers</label>
                         <PickList id="suppliers" source={availableSuppliers} target={product.suppliers} itemTemplate={(i) => supplierTemplate(i)}
                             sourceHeader="Available" targetHeader="Selected"
                             sourceStyle={{ height: '200px' }} targetStyle={{ height: '200px' }}
-                            onChange={(e) => onSupplierSelectChange(e)}></PickList>
+                            onChange={(event) => onSupplierSelectChange(event)}></PickList>
                     </div>
                     <div className="p-field p-col-12" style={{ textAlign: 'center' }}>
                         <label htmlFor="priceReductions">Price Reductions</label>
                         <PickList id="priceReductions" source={availablePriceReductions} target={product.priceReductions} itemTemplate={(i) => priceReductionTemplate(i)}
                             sourceHeader="Available" targetHeader="Selected"
                             sourceStyle={{ height: '200px' }} targetStyle={{ height: '200px' }}
-                            onChange={(e) => onPriceReductionSelectChange(e)}></PickList>
+                            onChange={(event) => onPriceReductionSelectChange(event)}></PickList>
                     </div>
                 </div>
             </Panel>
             <div className="buttons">
-                {/* {buttons} */}
+                {buttons()}
             </div>
         </div>
     );
