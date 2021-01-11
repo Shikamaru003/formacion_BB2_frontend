@@ -119,11 +119,14 @@ class ProductDetailComponent extends Component {
 
     deleteProduct() {
         this.setState({ showDialog: false })
-        deleteProductService(this.state.id,
+        deleteProductService(this.state.product.id,
             () => {
-                this.props.history.push('./products');
+                this.props.history.push('/products');
             },
-            (message) => console.log(message)
+            (message) => this.props.history.push({
+                pathname: '/products',
+                state: {message:  message}
+            })
         )
     }
 

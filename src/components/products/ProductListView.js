@@ -30,7 +30,8 @@ export default function ProductListView() {
     useEffect(() => {
         loadProducts();
 
-        if (history.location.state) {
+        if (history.location.state && history.location.state.message  ) {
+            console.log(history.location)
             messages.current.show(history.location.state.message);
         }
 

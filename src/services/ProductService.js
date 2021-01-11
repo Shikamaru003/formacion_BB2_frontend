@@ -65,7 +65,7 @@ export function saveProductService(product, successCallback, messagesCallBack) {
             (response) => {
                successCallback(response);
                 messagesCallBack({
-                    severity: 'success', summary: `Product updated!`, detail: ''
+                    severity: 'success', summary: `Product saved!`, detail: ''
                 });
             })
         .catch(
@@ -97,7 +97,7 @@ export function updateProductService(product, successCallback, messagesCallBack)
                 messagesCallBack({
                     severity: 'error',
                     summary: 'Error updating product!',
-                    detail: `(${(error.response && error.response.data && error.response.data.message) || error.message || error.toString()})`
+                    detail: (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
                 });
             }
         );
