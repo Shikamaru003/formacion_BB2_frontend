@@ -1,9 +1,8 @@
 import axios from 'axios'
-
-const API_URL = "http://localhost:9090/api/auth/";
+import * as Constants  from '../constants/AppConstants'
 
 export function loginService(username, password, successCallback, messagesCallBack) {
-    axios.get(API_URL + "login", {
+    axios.get(Constants.API_URL + "/auth/login", {
         auth: {
             username: username,
             password: password

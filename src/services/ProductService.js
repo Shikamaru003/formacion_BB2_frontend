@@ -1,10 +1,9 @@
 import axios from 'axios'
 import authHeader from './auth-header';
-
-const API_URL = 'http://localhost:9090/api';
+import * as Constants  from '../constants/AppConstants'
 
 export function getAllProductsService(successCallback) {
-    axios.get(API_URL + '/products/all', {
+    axios.get(Constants.API_URL + '/products/all', {
         headers: authHeader()
     })
         .then(
@@ -15,7 +14,7 @@ export function getAllProductsService(successCallback) {
 }
 
 export function getProductsService(page, size, sortField, sortOrder, successCallback, messagesCallBack) {
-    axios.get(API_URL + '/products', {
+    axios.get(Constants.API_URL + '/products', {
         params: {
             page: page,
             size: size,
@@ -40,7 +39,7 @@ export function getProductsService(page, size, sortField, sortOrder, successCall
 }
 
 export function getProductByIdService(id, successCallback, messagesCallBack) {
-    axios.get(API_URL + `/products/${id}`, {
+    axios.get(Constants.API_URL + `/products/${id}`, {
         headers: authHeader()
     })
         .then(
@@ -59,12 +58,12 @@ export function getProductByIdService(id, successCallback, messagesCallBack) {
 }
 
 export function saveProductService(product, successCallback, messagesCallBack) {
-    axios.post(API_URL + `/products`, product, {
+    axios.post(Constants.API_URL + `/products`, product, {
         headers: authHeader()
     })
         .then(
             (response) => {
-                successCallback(response);
+               successCallback(response);
                 messagesCallBack({
                     severity: 'success', summary: `Product updated!`, detail: ''
                 });
@@ -81,7 +80,7 @@ export function saveProductService(product, successCallback, messagesCallBack) {
 }
 
 export function updateProductService(product, successCallback, messagesCallBack) {
-    axios.put(API_URL + `/products/${product.id}`, product, {
+    axios.put(Constants.API_URL + `/products/${product.id}`, product, {
         headers: authHeader()
     })
         .then(
@@ -105,7 +104,7 @@ export function updateProductService(product, successCallback, messagesCallBack)
 }
 
 export function deleteProductService(id, successCallback, messagesCallBack) {
-    axios.delete(API_URL + `/products/${id}`, {
+    axios.delete(Constants.API_URL + `/products/${id}`, {
         headers: authHeader()
     })
         .then(
@@ -129,7 +128,7 @@ export function deleteProductService(id, successCallback, messagesCallBack) {
 }
 
 export function deactivateProductService(id, reason, username, successCallback, messagesCallBack) {
-    axios.delete(API_URL + `/products/${id}/deactivate`, {
+    axios.delete(Constants.API_URL + `/products/${id}/deactivate`, {
         params: {
             reason: reason,
             username: username
