@@ -34,9 +34,10 @@ export default function UserListView() {
         } else {
             loadUsers(page, rows, sortField, sortOrder);
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    function loadUsers(page, rows, sortField, sortOrder) {
+    function loadUsers(_page, _rows, _sortField, _sortOrder) {
         getUsersService(page, rows, sortField, sortOrder,
             (response) => {
                 setUsers(response.data.content);

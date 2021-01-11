@@ -34,9 +34,10 @@ export default function ProductListView() {
             sessionStorage.removeItem('message');
         }
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    function loadProducts(page, rows, sortField, sortOrder) {
+    function loadProducts(_page, _rows, _sortField, _sortOrder) {
         getProductsService(page, rows, sortField, sortOrder,
             (response) => { setProducts(response.data.content); setTotalElements(response.data.totalElements); },
             (error_message) => messages.current.show(error_message)

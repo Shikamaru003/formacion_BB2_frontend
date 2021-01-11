@@ -11,20 +11,21 @@ import { saveUserService } from '../../services/userService.js'
 
 export default function UserDetailView() {
 
-    const [user, setUser] = useState({});
+    const [user, setUser] = useState({ username: '', password: '', role: '' });
     const roles = ['ROLE_ADMIN', 'ROLE_USER'];
     const history = useHistory();
     const messages = useRef(null);
 
     function saveUser() {
+        console.log(user)
         if (user.username === '' || user.password === '' || user.role === '') {
-            messages.show({
+            messages.current.show({
                 severity: 'error', summary: '', detail: 'User name, password and role can´t be empty!'
             });
         }
         else {
             saveUserService(user,
-                (response, message) => {
+                (message) => {
                     sessionStorage.setItem('message', JSON.stringify(message));
                     history.push('/users');
                 },
@@ -41,7 +42,7 @@ export default function UserDetailView() {
 
     return (
         <div className="userDetail">
-            <Messages ref={(e) => this.messages = e}></Messages>
+            <Messages ref={messages}></Messages>
             <Panel header="User Detail">
                 <div className="p-fluid p-formgrid p-grid">
                     <div className="p-field p-col-4">

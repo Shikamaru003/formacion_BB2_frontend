@@ -40,6 +40,7 @@ export default function ProductDetailView() {
         } else {
             loadProduct(params.id);
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     function loadProduct(id) {

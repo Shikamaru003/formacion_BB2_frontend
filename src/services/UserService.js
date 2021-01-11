@@ -57,8 +57,8 @@ export function saveUserService(user, successCallback, errorCallBack) {
         headers: authHeader()
     })
         .then(
-            (response) => {
-                successCallback(response, {
+            () => {
+                successCallback({
                     severity: 'success',
                     summary: 'User saved!',
                     detail: ''
