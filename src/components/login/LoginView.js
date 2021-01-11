@@ -22,11 +22,10 @@ export default function LoginView() {
 
     function login() {
         loginService(username, password,
-            (response) => {
-                sessionStorage.setItem('user', JSON.stringify({ username: username, password: password, roles: response.data, accessToken: response.headers.authorization }));
+            () => {
                 history.push('products');
             },
-            (message) => messages.current.show(message))
+            (error_message) => messages.current.show(error_message))
     }
 
     return (

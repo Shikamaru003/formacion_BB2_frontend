@@ -1,52 +1,99 @@
 import axios from 'axios'
 import authHeader from './auth-header';
+import * as Constants from '../constants/AppConstants'
 
-const API_URL = 'http://localhost:9090/api';
-
-class userService {
-
-    getAllUsers() {
-        return axios.get(API_URL + '/users/all', {
-            headers: authHeader()
-        });
-    }
-
-    getUsers(page, size, sortField, sortOrder) {
-        return axios.get(API_URL + '/users', {
-            params: {
-                page: page,
-                size: size,
-                sortField: sortField,
-                sortOrder: sortOrder
-            },
-            headers: authHeader()
-        });
-    }
-
-    getUserById(id) {
-        return axios.get(API_URL + `/users/${id}`, {
-            headers: authHeader()
-        });
-    }
-
-    saveUser(user) {
-        return axios.post(API_URL + '/users', user, {
-            headers: authHeader()
-        });
-    }
-
-    updateUser(user) {
-        return axios.put(API_URL + `/users/${user.id}`, user, {
-            headers: authHeader()
-        });
-    }
-
-    deleteUser(id) {
-        return axios.delete(API_URL + `/users/${id}`, {
-            headers: authHeader()
-        });
-    }
-
+export function getAllUsersService() {
+    axios.get(Constants.API_URL + '/users/all', {
+        headers: authHeader()
+    });
 }
 
-export default new userService();
+export function getUsersService(page, size, sortField, sortOrder, successCallback, errorCallBack) {
+    axios.get(Constants.API_URL + '/users', {
+        params: {
+            page: page,
+            size: size,
+            sortField: sortField,
+            sortOrder: sortOrder
+        },
+        headers: authHeader()
+    })
+        .then(
+            (response) => {
+                successCallback(response)
+            })
+        .catch(
+            (error) => {
+                errorCallBack({
+                    severity: 'error',
+                    summary: 'Error loading users!',
+                    detail: (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
+                });
+            }
+        );
+}
+
+export function getUserService(id, successCallback, errorCallBack) {
+    axios.get(Constants.API_URL + `/users/${id}`, {
+        headers: authHeader()
+    })
+        .then(
+            (response) => {
+                successCallback(response)
+            })
+        .catch(
+            (error) => {
+                errorCallBack({
+                    severity: 'error',
+                    summary: `Error loading user with id ${id}`,
+                    detail: (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
+                });
+            }
+        );
+}
+
+export function saveUserService(user, successCallback, errorCallBack) {
+    axios.post(Constants.API_URL + '/users', user, {
+        headers: authHeader()
+    })
+        .then(
+            (response) => {
+                successCallback(response, {
+                    severity: 'success',
+                    summary: 'User saved!',
+                    detail: ''
+                })
+            })
+        .catch(
+            (error) => {
+                errorCallBack({
+                    severity: 'error',
+                    summary: 'Error saving user',
+                    detail: (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
+                });
+            }
+        );
+}
+
+export function deleteUserService(id, successCallback, errorCallBack) {
+    axios.delete(Constants.API_URL + `/users/${id}`, {
+        headers: authHeader()
+    })
+        .then(
+            (response) => {
+                successCallback(response, {
+                    severity: 'success',
+                    summary: `User with id ${id} deleted!`,
+                    detail: ''
+                })
+            })
+        .catch(
+            (error) => {
+                errorCallBack({
+                    severity: 'error',
+                    summary: 'Error deleting user',
+                    detail: (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
+                });
+            }
+        );
+}

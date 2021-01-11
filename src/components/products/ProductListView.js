@@ -26,12 +26,10 @@ export default function ProductListView() {
     const history = useHistory();
     const messages = useRef(null);
 
-
     useEffect(() => {
         loadProducts();
 
-        if (history.location.state && history.location.state.message  ) {
-            console.log(history.location)
+        if (history.location.state && history.location.state.message) {
             messages.current.show(history.location.state.message);
         }
 

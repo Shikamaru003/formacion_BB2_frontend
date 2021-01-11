@@ -1,7 +1,7 @@
 import axios from 'axios'
-import * as Constants  from '../constants/AppConstants'
+import * as Constants from '../constants/AppConstants'
 
-export function loginService(username, password, successCallback, messagesCallBack) {
+export function loginService(username, password, successCallback, errorCallBack) {
     axios.get(Constants.API_URL + "/auth/login", {
         auth: {
             username: username,
@@ -9,14 +9,13 @@ export function loginService(username, password, successCallback, messagesCallBa
         }
     })
         .then(
-            response => {
-                if (response.headers.authorization) {
-                    successCallback(response);
-                }
+            (response) => {
+                successCallback(response);
+                sessionStorage.setItem('user', JSON.stringify({ username: username, password: password, roles: response.data, accessToken: response.headers.authorization }));
             })
         .catch(
-            error => {
-                messagesCallBack({
+            (error) => {
+                errorCallBack({
                     severity: 'error',
                     summary: '',
                     detail: (error.response && error.response.data && error.response.data.message) || error.message || error.toString()

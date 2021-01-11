@@ -1,6 +1,6 @@
 import axios from 'axios'
 import authHeader from './auth-header';
-import * as Constants  from '../constants/AppConstants'
+import * as Constants from '../constants/AppConstants'
 
 export function getAllProductsService(successCallback) {
     axios.get(Constants.API_URL + '/products/all', {
@@ -13,7 +13,7 @@ export function getAllProductsService(successCallback) {
         )
 }
 
-export function getProductsService(page, size, sortField, sortOrder, successCallback, messagesCallBack) {
+export function getProductsService(page, size, sortField, sortOrder, successCallback, errorCallBack) {
     axios.get(Constants.API_URL + '/products', {
         params: {
             page: page,
@@ -29,7 +29,7 @@ export function getProductsService(page, size, sortField, sortOrder, successCall
             })
         .catch(
             (error) => {
-                messagesCallBack({
+                errorCallBack({
                     severity: 'error',
                     summary: 'Error loading products!',
                     detail: (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
@@ -38,7 +38,7 @@ export function getProductsService(page, size, sortField, sortOrder, successCall
         )
 }
 
-export function getProductByIdService(id, successCallback, messagesCallBack) {
+export function getProductByIdService(id, successCallback, errorCallBack) {
     axios.get(Constants.API_URL + `/products/${id}`, {
         headers: authHeader()
     })
@@ -48,7 +48,7 @@ export function getProductByIdService(id, successCallback, messagesCallBack) {
             })
         .catch(
             (error) => {
-                messagesCallBack({
+                errorCallBack({
                     severity: 'error',
                     summary: `Error loading product with id ${id}!`,
                     detail: (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
@@ -57,20 +57,19 @@ export function getProductByIdService(id, successCallback, messagesCallBack) {
         );
 }
 
-export function saveProductService(product, successCallback, messagesCallBack) {
+export function saveProductService(product, successCallback, errorCallBack) {
     axios.post(Constants.API_URL + `/products`, product, {
         headers: authHeader()
     })
         .then(
             (response) => {
-               successCallback(response);
-                messagesCallBack({
+                successCallback(response, {
                     severity: 'success', summary: `Product saved!`, detail: ''
                 });
             })
         .catch(
             (error) => {
-                messagesCallBack({
+                errorCallBack({
                     severity: 'error',
                     summary: 'Error saving product! ',
                     detail: (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
@@ -79,14 +78,13 @@ export function saveProductService(product, successCallback, messagesCallBack) {
         );
 }
 
-export function updateProductService(product, successCallback, messagesCallBack) {
+export function updateProductService(product, successCallback, errorCallBack) {
     axios.put(Constants.API_URL + `/products/${product.id}`, product, {
         headers: authHeader()
     })
         .then(
             (response) => {
-                successCallback(response);
-                messagesCallBack({
+                successCallback(response, {
                     severity: 'success',
                     summary: `Product updated!`,
                     detail: ''
@@ -94,7 +92,7 @@ export function updateProductService(product, successCallback, messagesCallBack)
             })
         .catch(
             (error) => {
-                messagesCallBack({
+                errorCallBack({
                     severity: 'error',
                     summary: 'Error updating product!',
                     detail: (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
@@ -103,14 +101,13 @@ export function updateProductService(product, successCallback, messagesCallBack)
         );
 }
 
-export function deleteProductService(id, successCallback, messagesCallBack) {
+export function deleteProductService(id, successCallback, errorCallBack) {
     axios.delete(Constants.API_URL + `/products/${id}`, {
         headers: authHeader()
     })
         .then(
             () => {
-                successCallback();
-                messagesCallBack({
+                successCallback({
                     severity: 'success',
                     summary: `Product with id ${id} deleted!`,
                     detail: ''
@@ -118,7 +115,7 @@ export function deleteProductService(id, successCallback, messagesCallBack) {
             })
         .catch(
             (error) => {
-                messagesCallBack({
+                errorCallBack({
                     severity: 'error',
                     summary: 'Error deleting product!',
                     detail: (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
@@ -127,7 +124,7 @@ export function deleteProductService(id, successCallback, messagesCallBack) {
         );
 }
 
-export function deactivateProductService(id, reason, username, successCallback, messagesCallBack) {
+export function deactivateProductService(id, reason, username, successCallback, errorCallBack) {
     axios.delete(Constants.API_URL + `/products/${id}/deactivate`, {
         params: {
             reason: reason,
@@ -137,8 +134,7 @@ export function deactivateProductService(id, reason, username, successCallback, 
     })
         .then(
             () => {
-                successCallback();
-                messagesCallBack({
+                successCallback({
                     severity: 'success',
                     summary: `Product with id ${id} deactivated!`,
                     detail: ''
@@ -146,7 +142,7 @@ export function deactivateProductService(id, reason, username, successCallback, 
             })
         .catch(
             (error) => {
-                messagesCallBack({
+                errorCallBack({
                     severity: 'error',
                     summary: 'Error deactivating product!',
                     detail: (error.response && error.response.data && error.response.data.message) || error.message || error.toString()

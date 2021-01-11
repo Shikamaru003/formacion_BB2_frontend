@@ -1,22 +1,42 @@
 import axios from 'axios'
 import authHeader from './auth-header';
 
+import * as Constants from '../constants/AppConstants'
 
-const API_URL = 'http://localhost:9090/api/';
-
-class priceReductionService {
-
-    getAllPriceReductions() {
-        return axios.get(API_URL + 'price_reductions', {
-            headers: authHeader()
-        });
-    }
-
-    getAvailablePriceReductions(id) {
-        return axios.get(API_URL + `products/${id}/available_price_reductions`, {
-            headers: authHeader()
-        });
-    }
+export function getAllPriceReductionsService(successCallback, errorCallBack) {
+    axios.get(Constants.API_URL + 'price_reductions', {
+        headers: authHeader()
+    })
+        .then(
+            (response) => {
+                successCallback(response)
+            })
+        .catch(
+            (error) => {
+                errorCallBack({
+                    severity: 'error',
+                    summary: `Error loading price reductions`,
+                    detail: (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
+                });
+            }
+        );
 }
 
-export default new priceReductionService();
+export function getAvailablePriceReductionsService(id, successCallback, errorCallBack) {
+    axios.get(Constants.API_URL + `products/${id}/available_price_reductions`, {
+        headers: authHeader()
+    })
+        .then(
+            (response) => {
+                successCallback(response)
+            })
+        .catch(
+            (error) => {
+                errorCallBack({
+                    severity: 'error',
+                    summary: `Error loading price reductions of product with id ${id}`,
+                    detail: (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
+                });
+            }
+        );
+}

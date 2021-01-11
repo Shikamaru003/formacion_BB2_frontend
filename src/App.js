@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 
 import ProductListView from './components/products/ProductListView';
-import ProductDetailComponent from './components/products/ProductDetailComponent';
+import ProductDetailComponent from './components/products/ProductDetailView';
 import HeaderComponent from './components/header/HeaderComponent';
 import LoginView from './components/login/LoginView';
-import UserListComponent from './components/UserListComponent';
-import UserDetailComponent from './components/UserDetailComponet';
+import UserListComponent from './components/UserListView';
+import UserDetailComponent from './components/UserDetailViewjs';
 import AuthenticatedRoute from './components/AuthenticatedRoute';
 
 import {isLoggedIn} from './services/authenticationService';
