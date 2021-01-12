@@ -118,12 +118,12 @@ export default function ProductDetailView() {
 
     function onSupplierSelectChange(event) {
         setAvailableSuppliers(event.source)
-        setProduct({ ...product, suppliers: event.target.target });
+        setProduct({ ...product, suppliers: event.target });
     }
 
     function onPriceReductionSelectChange(event) {
         setAvailablePriceReductions(event.source)
-        setProduct({ ...product, priceReductions: event.target.target });
+        setProduct({ ...product, priceReductions: event.target });
     }
 
     function supplierTemplate(item) {
